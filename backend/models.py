@@ -5,6 +5,7 @@ This file defines the SQLAlchemy models for the database.
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from database import Base
+from sqlalchemy.ext.hybrid import hybrid_property
 
 # Association table: Many-to-Many relationship between students and formations
 student_formation_table = Table(
@@ -22,6 +23,10 @@ class Department(Base):
 
     # Relationship: one department has many students
     students = relationship("Student", back_populates="department")
+
+    @hybrid_property
+    def student_count(self):
+        return len(self.students) if self.students else 0
 
 
 class Formation(Base):

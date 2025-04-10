@@ -20,7 +20,6 @@ export const getStudents = async (token: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
-
   if (!res.ok) throw new Error("Failed to fetch students");
   return res.json();
 };

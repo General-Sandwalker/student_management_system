@@ -16,12 +16,20 @@ class DepartmentBase(BaseModel):
 class DepartmentCreate(DepartmentBase):
     pass
 
-class DepartmentRead(DepartmentBase):
+class DepartmentRead(BaseModel):
     id: int
-
+    name: str
+    student_count: int
+    
     class Config:
         orm_mode = True
 
+class DepartmentSimple(BaseModel):
+    id: int
+    name: str
+    
+    class Config:
+        orm_mode = True
 
 # --------------------------
 # Formation Schemas
@@ -56,9 +64,9 @@ class StudentCreate(StudentBase):
 
 class StudentRead(StudentBase):
     id: int
-    department: Optional[DepartmentRead]
+    department: Optional[DepartmentSimple]  # Use simple department without student_count
     formations: List[FormationRead] = []
-
+    
     class Config:
         orm_mode = True
 

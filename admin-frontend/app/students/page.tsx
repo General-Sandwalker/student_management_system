@@ -2,20 +2,41 @@
 import { useEffect, useState } from "react";
 import { getStudents, deleteStudent } from "@/services/api";
 
+interface Student {
+  id: number;
+  name: string;
+  email: string;
+  department?: {
+    name: string;
+  };
+  formations?: Array<{
+    id: number;
+    title: string;
+  }>;
+}
+
 export default function StudentsPage() {
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const fetchStudents = () => {
-    const token = localStorage.getItem("admin_token");
-    if (!token) return;
-
-    setLoading(true);
-    getStudents(token)
-      .then(setStudents)
-      .catch((err) => setError(err.message || "Failed to fetch students"))
-      .finally(() => setLoading(false));
+  const fetchStudents = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const token = localStorage.getItem("admin_token");
+      if (!token) {
+        throw new Error("Admin authentication required");
+      }
+      
+      const data = await getStudents(token);
+      setStudents(data);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch students");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -24,13 +45,31 @@ export default function StudentsPage() {
 
   const handleDelete = async (id: number) => {
     const token = localStorage.getItem("admin_token");
-    if (!token) return;
+    if (!token) {
+      setError("Admin authentication required");
+      return;
+    }
+
+    if (!confirm("Are you sure you want to delete this student?")) {
+      return;
+    }
 
     try {
-      await deleteStudent(token, id);
-      fetchStudents(); // Refresh the list after deletion
+      setDeletingId(id);
+      const response = await deleteStudent(token, id);
+      
+      if (response) {
+        // Update state optimistically
+        setStudents(prev => prev.filter(s => s.id !== id));
+      } else {
+        throw new Error("No response from server");
+      }
     } catch (err: any) {
       setError(err.message || "Failed to delete student");
+      // Re-fetch if deletion fails
+      await fetchStudents();
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -63,7 +102,7 @@ export default function StudentsPage() {
               </tr>
             </thead>
             <tbody>
-              {students.map((s: any) => (
+              {students.map((s) => (
                 <tr key={s.id} className="hover:bg-gray-800/50 transition-colors">
                   <td className="p-3 border-b border-gray-700">{s.name}</td>
                   <td className="p-3 border-b border-gray-700 text-gray-400">{s.email}</td>
@@ -71,9 +110,9 @@ export default function StudentsPage() {
                     {s.department?.name || <span className="text-gray-500">—</span>}
                   </td>
                   <td className="p-3 border-b border-gray-700">
-                    {s.formations?.length > 0 ? (
+                    {s.formations?.length ? (
                       <div className="flex flex-wrap gap-1">
-                        {s.formations.map((f: any) => (
+                        {s.formations.map((f) => (
                           <span key={f.id} className="px-2 py-1 bg-gray-700 rounded text-sm">
                             {f.title}
                           </span>
@@ -84,11 +123,12 @@ export default function StudentsPage() {
                     )}
                   </td>
                   <td className="p-3 border-b border-gray-700">
-                    <button 
+                    <button
                       onClick={() => handleDelete(s.id)}
-                      className="text-red-400 hover:text-red-300 text-sm"
+                      className="px-3 py-1 bg-red-600/20 text-red-400 rounded-md hover:bg-red-600/30 transition-colors"
+                      disabled={deletingId === s.id}
                     >
-                      Delete
+                      {deletingId === s.id ? 'Deleting...' : 'Delete'}
                     </button>
                   </td>
                 </tr>

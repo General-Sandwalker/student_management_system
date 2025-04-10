@@ -4,7 +4,7 @@ This file contains API routes for students, departments, and formations.
 
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session,joinedload
 import models, schemas
 from database import get_db
 from fastapi.security import OAuth2PasswordRequestForm
@@ -33,7 +33,17 @@ def create_department(dept: schemas.DepartmentCreate, db: Session = Depends(get_
 
 @router.get("/departments/", response_model=list[schemas.DepartmentRead])
 def list_departments(db: Session = Depends(get_db)):
-    return db.query(models.Department).all()
+    try:
+        departments = db.query(models.Department).options(
+            joinedload(models.Department.students)
+        ).all()
+        return departments
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching departments: {str(e)}"
+        )
+
 
 
 # --------------------------
@@ -84,10 +94,12 @@ def create_student(student: schemas.StudentCreate, db: Session = Depends(get_db)
 @router.get("/students/", response_model=list[schemas.StudentRead])
 def list_students(
     db: Session = Depends(get_db),
-    current_student: models.Student = Depends(get_current_student)
+    current_admin: models.Admin = Depends(get_current_admin)
 ):
-    return db.query(models.Student).all()
-
+    return db.query(models.Student).options(
+        joinedload(models.Student.department),
+        joinedload(models.Student.formations)
+    ).all()
 # --------------------------
 # Profile Routes
 # --------------------------
