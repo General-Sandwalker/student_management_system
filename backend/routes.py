@@ -214,8 +214,16 @@ async def get_admin_stats(
             detail=str(e)
         )
     
+# --------------------------
+# Delete Routes (with Admin Auth)
+# --------------------------
+
 @router.delete("/students/{student_id}", response_model=schemas.StudentRead)
-def remove_student(student_id: int, db: Session = Depends(get_db)):
+def remove_student(
+    student_id: int, 
+    db: Session = Depends(get_db),
+    current_admin: models.Admin = Depends(get_current_admin)  # Add admin auth
+):
     student = db.query(models.Student).filter(models.Student.id == student_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -225,22 +233,43 @@ def remove_student(student_id: int, db: Session = Depends(get_db)):
     return student
 
 @router.delete("/departments/{department_id}", response_model=schemas.DepartmentRead)
-def remove_department(department_id: int, db: Session = Depends(get_db)):
+def remove_department(
+    department_id: int, 
+    db: Session = Depends(get_db),
+    current_admin: models.Admin = Depends(get_current_admin)  # Add admin auth
+):
     department = db.query(models.Department).filter(models.Department.id == department_id).first()
     if not department:
         raise HTTPException(status_code=404, detail="Department not found")
+    
+    # Check if department has students before deleting
+    if department.students:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot delete department with assigned students"
+        )
     
     db.delete(department)
     db.commit()
     return department
 
 @router.delete("/formations/{formation_id}", response_model=schemas.FormationRead)
-def remove_formation(formation_id: int, db: Session = Depends(get_db)):
+def remove_formation(
+    formation_id: int, 
+    db: Session = Depends(get_db),
+    current_admin: models.Admin = Depends(get_current_admin)  # Add admin auth
+):
     formation = db.query(models.Formation).filter(models.Formation.id == formation_id).first()
     if not formation:
         raise HTTPException(status_code=404, detail="Formation not found")
 
+    # Check if formation has students before deleting
+    if formation.students:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot delete formation with assigned students"
+        )
+
     db.delete(formation)
     db.commit()
     return formation
-
