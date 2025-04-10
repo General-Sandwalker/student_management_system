@@ -1,0 +1,3 @@
+.venv
+backend/student.db
+backend/__pycache__

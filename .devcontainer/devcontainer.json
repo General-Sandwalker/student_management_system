@@ -1,0 +1,29 @@
+{
+    "name": "Student Management System DevContainer",
+    "dockerFile": "Dockerfile",
+    "context": "..",
+    "workspaceFolder": "/workspaces/student_management_system",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/student_management_system,type=bind,consistency=cached",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "angular.ng-template"
+            ]
+        }
+    },
+    "remoteUser": "root",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker": {
+            "version": "latest"
+        },
+        "ghcr.io/meaningful-ooo/devcontainer-features/homebrew:2": {}
+    },
+    "appPort": [
+        "8000:8000",
+        "4200:4200",
+        "3000:3000"
+    ],
+    "postCreateCommand": "python3 -m venv .venv && .venv/bin/pip install -r .devcontainer/requirements.txt"
+}

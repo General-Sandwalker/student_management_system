@@ -1,0 +1,11 @@
+fastapi[standard]
+SQLAlchemy
+pydantic
+python-multipart
+
+# Auth
+python-jose[cryptography]
+passlib[bcrypt]
+
+# Env support
+python-dotenv
