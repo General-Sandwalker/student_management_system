@@ -1,23 +1,5 @@
 # Use an official Node.js runtime as the base image
-FROM debian:latest
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg \
-    git \
-    build-essential \
-    ca-certificates \
-    wget \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Node.js version 23 and npm, then Angular CLI then nextjs and reactjs
-RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g create-next-app && \
-    npm install -g create-react-app
-
+FROM node:latest
 
 # Set the working directory inside the container
 WORKDIR /app
