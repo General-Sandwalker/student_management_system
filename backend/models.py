@@ -2,7 +2,7 @@
 This file defines the SQLAlchemy models for the database.
 """
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, Table, func, select
 from sqlalchemy.orm import relationship
 from database import Base
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -29,19 +29,36 @@ class Department(Base):
         return len(self.students) if self.students else 0
 
 
+# --------------------------
+# Formation Model
+# --------------------------
+
 class Formation(Base):
     __tablename__ = "formations"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, unique=True, nullable=False)
-    description = Column(String)
+    title = Column(String(100), unique=True, nullable=False)
+    description = Column(String(500))
 
-    # Relationship: many students can enroll in a formation
+    # Relationship with students
     students = relationship(
         "Student",
         secondary=student_formation_table,
-        back_populates="formations"
+        back_populates="formations",
+        lazy="selectin"  # Eager loading for better performance
     )
+
+    @hybrid_property
+    def students_count(self):
+        return len(self.students)
+
+    @students_count.expression
+    def students_count(cls):
+        return (
+            select([func.count(student_formation_table.c.student_id)])
+            .where(student_formation_table.c.formation_id == cls.id)
+            .label("students_count")
+        )
 
 
 class Student(Base):

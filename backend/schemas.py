@@ -3,7 +3,7 @@ This file defines Pydantic schemas for request and response validation.
 """
 
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 
 
 # --------------------------
@@ -36,17 +36,63 @@ class DepartmentSimple(BaseModel):
 # --------------------------
 
 class FormationBase(BaseModel):
-    title: str
-    description: Optional[str] = None
+    title: str = Field(..., min_length=1, max_length=100, example="Docker Fundamentals")
+    description: Optional[str] = Field(
+        None, 
+        max_length=500, 
+        example="Learn containerization with Docker"
+    )
+
+    @field_validator('title')
+    def validate_title(cls, v):
+        v = v.strip()
+        if not v:
+            raise ValueError("Title cannot be empty")
+        return v
 
 class FormationCreate(FormationBase):
     pass
 
+class FormationUpdate(BaseModel):
+    title: Optional[str] = Field(
+        None,
+        min_length=1,
+        max_length=100,
+        example="Advanced Docker"
+    )
+    description: Optional[str] = Field(
+        None,
+        max_length=500,
+        example="Deep dive into Docker concepts"
+    )
+
+    @field_validator('title')
+    def validate_title(cls, v):
+        if v is not None:  # Only validate if title is provided
+            v = v.strip()
+            if not v:
+                raise ValueError("Title cannot be empty")
+        return v
+
 class FormationRead(FormationBase):
     id: int
+    students_count: Optional[int] = Field(
+        None,
+        description="Number of students enrolled",
+        example=25
+    )
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Replaces orm_mode in Pydantic v2
+        json_schema_extra = {
+            "example": {
+                "id": 1,
+                "title": "Docker Fundamentals",
+                "description": "Learn containerization with Docker",
+                "students_count": 25
+            }
+        }
+
 
 
 # --------------------------

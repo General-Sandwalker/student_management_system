@@ -3,7 +3,11 @@ This file contains API routes for students, departments, and formations.
 """
 
 from datetime import timedelta
+from sqlite3 import IntegrityError
+from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
+from sqlalchemy import func
 from sqlalchemy.orm import Session,joinedload
 import models, schemas
 from database import get_db
@@ -50,18 +54,73 @@ def list_departments(db: Session = Depends(get_db)):
 # Formation Routes
 # --------------------------
 
-@router.post("/formations/", response_model=schemas.FormationRead)
-def create_formation(form: schemas.FormationCreate, db: Session = Depends(get_db)):
-    new_form = models.Formation(**form.dict())
-    db.add(new_form)
-    db.commit()
-    db.refresh(new_form)
-    return new_form
+@router.post("/formations/", 
+             response_model=schemas.FormationRead,
+             status_code=status.HTTP_201_CREATED,
+             responses={
+                 409: {"description": "Formation with this title already exists"},
+                 400: {"description": "Invalid input data"}
+             })
+def create_formation(
+    form: schemas.FormationCreate, 
+    db: Session = Depends(get_db)
+):
+    """
+    Create a new formation.
+    - **title**: must be unique (case-insensitive)
+    - **description**: optional description
+    """
+    # Normalize title for case-insensitive comparison
+    normalized_title = form.title.lower().strip()
+    
+    # Check for existing formation
+    existing_formation = db.query(models.Formation).filter(
+        func.lower(models.Formation.title) == normalized_title
+    ).first()
+    
+    if existing_formation:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Formation with title '{form.title}' already exists (ID: {existing_formation.id})"
+        )
+    
+    try:
+        new_form = models.Formation(
+            title=form.title.strip(),
+            description=form.description.strip() if form.description else None
+        )
+        db.add(new_form)
+        db.commit()
+        db.refresh(new_form)
+        return new_form
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Database constraints violation"
+        )
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error"
+        )
 
 
-@router.get("/formations/", response_model=list[schemas.FormationRead])
-def list_formations(db: Session = Depends(get_db)):
-    return db.query(models.Formation).all()
+@router.get("/formations/", 
+            response_model=list[schemas.FormationRead],
+            response_model_exclude_none=True)
+def list_formations(
+    skip: int = 0, 
+    limit: int = 100,
+    db: Session = Depends(get_db)
+):
+    """
+    List all formations with pagination support.
+    - **skip**: number of records to skip
+    - **limit**: maximum number of records to return
+    """
+    return db.query(models.Formation).offset(skip).limit(limit).all()
 
 
 # --------------------------
@@ -134,7 +193,7 @@ def login(
     return {"access_token": token, "token_type": "bearer"}
 
 # --------------------------
-# Update Routes
+# Student Update Routes
 # --------------------------
 
 @router.put("/students/{student_id}", response_model=schemas.StudentRead)
@@ -154,6 +213,77 @@ def update_student(student_id: int, student_data: schemas.StudentCreate, db: Ses
     db.commit()
     db.refresh(student)
     return student
+
+# --------------------------
+# Department Update Routes
+# --------------------------
+
+@router.put("/departments/{department_id}", response_model=schemas.DepartmentRead)
+def update_department(department_id: int, department_data: schemas.DepartmentCreate, db: Session = Depends(get_db)):
+    department = db.query(models.Department).filter(models.Department.id == department_id).first()
+    if not department:
+        raise HTTPException(status_code=404, detail="Department not found")
+    
+    department.name = department_data.name
+
+    db.commit()
+    db.refresh(department)
+    return department
+
+# --------------------------
+# Formation Update Routes
+# --------------------------
+
+@router.put("/formations/{formation_id}", response_model=schemas.FormationRead)
+def update_formation(
+    formation_id: int,
+    formation_data: schemas.FormationUpdate,  # Now using the correct schema
+    db: Session = Depends(get_db)
+):
+    """
+    Update a formation with proper validation
+    
+    Args:
+        formation_id: ID of the formation to update
+        formation_data: Partial update data (all fields optional)
+    """
+    try:
+        # Get existing formation
+        formation = db.query(models.Formation).filter(models.Formation.id == formation_id).first()
+        if not formation:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Formation not found"
+            )
+        
+        # Check for duplicate title if title is being updated
+        if formation_data.title is not None:
+            existing = db.query(models.Formation)\
+                .filter(models.Formation.title == formation_data.title)\
+                .filter(models.Formation.id != formation_id)\
+                .first()
+            if existing:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Formation with this title already exists"
+                )
+        
+        # Update only provided fields
+        update_data = formation_data.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(formation, field, value)
+        
+        db.commit()
+        db.refresh(formation)
+        return formation
+        
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error: {str(e)}"
+        )
+    
 
 # --------------------------
 # Admin Creation Routes
@@ -203,16 +333,20 @@ def admin_login(
         "admin_id": admin.id  # Optional but helpful
     }
 
-@router.get("/admin/stats")
+@router.get("/admin/stats", response_model=Dict[str, int])
 async def get_admin_stats(
     db: Session = Depends(get_db),
     current_admin: models.Admin = Depends(get_current_admin)
 ):
+    """
+    Get admin dashboard statistics with proper typing
+    """
     try:
-        student_count = db.query(models.Student).count()
-        dept_count = db.query(models.Department).count()
-        formation_count = db.query(models.Formation).count()
-        admin_count = db.query(models.Admin).count()
+        # Get counts with explicit typing
+        student_count: int = db.query(models.Student).count()
+        dept_count: int = db.query(models.Department).count()
+        formation_count: int = db.query(models.Formation).count()
+        admin_count: int = db.query(models.Admin).count()
         
         return {
             "students": student_count,
@@ -220,10 +354,11 @@ async def get_admin_stats(
             "formations": formation_count,
             "admins": admin_count
         }
+        
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
+            detail=f"Error fetching stats: {str(e)}"
         )
     
 # --------------------------
