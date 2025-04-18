@@ -361,6 +361,46 @@ async def get_admin_stats(
             detail=f"Error fetching stats: {str(e)}"
         )
     
+@router.get("/admins/", response_model=list[schemas.AdminRead])
+def list_admins(
+    db: Session = Depends(get_db),
+    current_admin: models.Admin = Depends(get_current_admin)
+):
+    return db.query(models.Admin).all()
+
+@router.get("/admins/{admin_id}", response_model=schemas.AdminRead)
+def get_admin(
+    admin_id: int,
+    db: Session = Depends(get_db),
+    current_admin: models.Admin = Depends(get_current_admin)
+):
+    admin = db.query(models.Admin).filter(models.Admin.id == admin_id).first()
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    return admin
+
+@router.put("/admins/{admin_id}", response_model=schemas.AdminRead)
+def update_admin(
+    admin_id: int,
+    admin_data: schemas.AdminUpdate,
+    db: Session = Depends(get_db),
+    current_admin: models.Admin = Depends(get_current_admin)
+):
+    admin = db.query(models.Admin).filter(models.Admin.id == admin_id).first()
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    
+    if admin_data.name:
+        admin.name = admin_data.name
+    if admin_data.email:
+        admin.email = admin_data.email
+    if admin_data.password:
+        admin.password_hash = hash_password(admin_data.password)
+    
+    db.commit()
+    db.refresh(admin)
+    return admin
+
 # --------------------------
 # Delete Routes (with Admin Auth)
 # --------------------------

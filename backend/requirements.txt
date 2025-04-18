@@ -2,10 +2,12 @@ fastapi[standard]
 SQLAlchemy
 pydantic
 python-multipart
+requests
 
 # Auth
 python-jose[cryptography]
 passlib[bcrypt]
+bcrypt==4.0.1
 
 # Env support
 python-dotenv

@@ -134,3 +134,8 @@ class AdminRead(AdminBase):
 
     class Config:
         from_attributes = True  # Updated from orm_mode in Pydantic v2
+
+class AdminUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None

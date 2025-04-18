@@ -13,6 +13,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the FastAPI application code into the container
 COPY . .
 
+RUN chmod +x /app/manage-admins
+
+COPY manage-admins /bin/manage-admins
+
 # Expose the port FastAPI will run on
 EXPOSE 8000
 

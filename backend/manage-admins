@@ -1,0 +1,282 @@
+#!/usr/bin/env python3
+import sys
+from getpass import getpass
+from typing import Optional, List
+from pydantic import ValidationError
+
+# Use the same database and models as your FastAPI app
+from database import SessionLocal
+from models import Admin
+from schemas import AdminCreate, AdminUpdate
+
+# Fallback password hashing if bcrypt fails
+try:
+    from auth import hash_password
+    BC_CRYPT_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: Could not import auth utilities (bcrypt may not be available): {e}")
+    print("Falling back to basic password hashing (not recommended for production)")
+    BC_CRYPT_AVAILABLE = False
+
+    # Simple fallback hashing (only for development/testing)
+    import hashlib
+    def hash_password(password: str) -> str:
+        return hashlib.sha256(password.encode()).hexdigest()
+
+class AdminManager:
+    def __init__(self):
+        self.db = SessionLocal()
+    
+    def __del__(self):
+        self.db.close()
+    
+    def _hash_password_with_fallback(self, password: str) -> str:
+        """Handle password hashing with bcrypt fallback"""
+        if not BC_CRYPT_AVAILABLE:
+            print("\nWarning: Using fallback password hashing. This is not secure for production!")
+            print("Please ensure bcrypt is properly installed by running:")
+            print("pip install passlib[bcrypt] bcrypt==4.0.1")
+        return hash_password(password)
+    
+    def list_admins(self, verbose: bool = False) -> List[Admin]:
+        """List all admins with optional verbose output"""
+        admins = self.db.query(Admin).order_by(Admin.id).all()
+        
+        if verbose:
+            print("\nList of Admins:")
+            print("ID  Name                 Email")
+            print("--- -------------------- --------------------")
+            for admin in admins:
+                print(f"{admin.id:<3} {admin.name[:20]:<20} {admin.email[:20]}")
+            print(f"\nTotal admins: {len(admins)}")
+        return admins
+    
+    def create_admin(self):
+        """Create a new admin with validation"""
+        print("\nCreate New Admin")
+        
+        try:
+            name = input("Full Name: ").strip()
+            email = input("Email: ").strip().lower()
+            
+            while True:
+                password = getpass("Password: ").strip()
+                if len(password) < 8:
+                    print("Error: Password must be at least 8 characters")
+                    continue
+                confirm_password = getpass("Confirm Password: ").strip()
+                if password == confirm_password:
+                    break
+                print("Error: Passwords don't match. Please try again.")
+            
+            # Hash the password
+            hashed_password = self._hash_password_with_fallback(password)
+            
+            # Validate using Pydantic schema
+            admin_data = AdminCreate(
+                name=name,
+                email=email,
+                password=password  # Only used for validation
+            )
+            
+            # Check for existing admin
+            if self.db.query(Admin).filter(Admin.email == email).first():
+                print(f"\nError: Admin with email {email} already exists!")
+                return
+            
+            # Create new admin
+            new_admin = Admin(
+                name=admin_data.name,
+                email=admin_data.email,
+                password_hash=hashed_password
+            )
+            
+            self.db.add(new_admin)
+            self.db.commit()
+            
+            print("\nAdmin created successfully!")
+            print(f"ID: {new_admin.id}")
+            print(f"Name: {new_admin.name}")
+            print(f"Email: {new_admin.email}")
+            return new_admin
+            
+        except ValidationError as e:
+            print(f"\nValidation error: {e}")
+        except Exception as e:
+            self.db.rollback()
+            print(f"\nError creating admin: {str(e)}")
+    
+    def update_admin(self):
+        """Update an existing admin with proper validation"""
+        admins = self.list_admins(verbose=True)
+        if not admins:
+            return
+        
+        try:
+            admin_id = int(input("\nEnter admin ID to update: ").strip())
+        except ValueError:
+            print("Error: Please enter a valid numeric ID")
+            return
+        
+        admin = self.db.query(Admin).filter(Admin.id == admin_id).first()
+        if not admin:
+            print(f"\nError: Admin with ID {admin_id} not found!")
+            return
+        
+        print(f"\nUpdating admin: {admin.name} ({admin.email})")
+        
+        try:
+            # Get updated fields
+            name = input(f"Name [{admin.name}]: ").strip() or admin.name
+            email = input(f"Email [{admin.email}]: ").strip().lower() or admin.email
+            
+            # Check for email conflict
+            if email != admin.email:
+                existing = self.db.query(Admin).filter(Admin.email == email).first()
+                if existing:
+                    print(f"\nError: Email {email} already in use by another admin!")
+                    return
+            
+            # Password update
+            password = None
+            if input("Change password? (y/N): ").strip().lower() == 'y':
+                while True:
+                    password = getpass("New Password: ").strip()
+                    if len(password) < 8:
+                        print("Error: Password must be at least 8 characters")
+                        continue
+                    confirm = getpass("Confirm Password: ").strip()
+                    if password == confirm:
+                        break
+                    print("Error: Passwords don't match!")
+            
+            # Validate using Pydantic schema
+            update_data = {
+                "name": name,
+                "email": email
+            }
+            if password:
+                update_data["password"] = password
+                hashed_password = self._hash_password_with_fallback(password)
+                
+            admin_update = AdminUpdate(**update_data)
+            
+            # Apply updates
+            admin.name = admin_update.name or admin.name
+            admin.email = admin_update.email or admin.email
+            if password:
+                admin.password_hash = hashed_password
+            
+            self.db.commit()
+            
+            print("\nAdmin updated successfully!")
+            print(f"ID: {admin.id}")
+            print(f"Updated name: {admin.name}")
+            print(f"Updated email: {admin.email}")
+            return admin
+            
+        except ValidationError as e:
+            print(f"\nValidation error: {e}")
+        except Exception as e:
+            self.db.rollback()
+            print(f"\nError updating admin: {str(e)}")
+    
+    def delete_admin(self):
+        """Delete an admin with confirmation"""
+        admins = self.list_admins(verbose=True)
+        if not admins:
+            return
+        
+        try:
+            admin_id = int(input("\nEnter admin ID to delete: ").strip())
+        except ValueError:
+            print("Error: Please enter a valid numeric ID")
+            return
+        
+        admin = self.db.query(Admin).filter(Admin.id == admin_id).first()
+        if not admin:
+            print(f"\nError: Admin with ID {admin_id} not found!")
+            return
+        
+        confirm = input(
+            f"\nWARNING: Are you SURE you want to permanently delete admin {admin.name} ({admin.email})? (y/N): "
+        ).strip().lower()
+        
+        if confirm != 'y':
+            print("Deletion cancelled.")
+            return
+        
+        try:
+            self.db.delete(admin)
+            self.db.commit()
+            print("\nAdmin deleted successfully!")
+        except Exception as e:
+            self.db.rollback()
+            print(f"\nError deleting admin: {str(e)}")
+
+def print_help():
+    print("\nAdmin Management Tool - Direct Database Access")
+    print("Usage:")
+    print("  python manage-admins.py list       - List all admins")
+    print("  python manage-admins.py create     - Create a new admin")
+    print("  python manage-admins.py update     - Update an existing admin")
+    print("  python manage-admins.py delete     - Delete an admin")
+    print("  python manage-admins.py interactive - Enter interactive mode")
+    print("")
+
+def main():
+    if len(sys.argv) < 2:
+        print_help()
+        return
+    
+    command = sys.argv[1].lower()
+    manager = AdminManager()
+    
+    try:
+        if command == "list":
+            manager.list_admins(verbose=True)
+        elif command == "create":
+            manager.create_admin()
+        elif command == "update":
+            manager.update_admin()
+        elif command == "delete":
+            manager.delete_admin()
+        elif command == "interactive":
+            while True:
+                print("\nAdmin Management Tool (Interactive Mode)")
+                print("1. List Admins")
+                print("2. Create Admin")
+                print("3. Update Admin")
+                print("4. Delete Admin")
+                print("5. Exit")
+                
+                try:
+                    choice = input("Enter choice (1-5): ").strip()
+                    
+                    if choice == '1':
+                        manager.list_admins(verbose=True)
+                    elif choice == '2':
+                        manager.create_admin()
+                    elif choice == '3':
+                        manager.update_admin()
+                    elif choice == '4':
+                        manager.delete_admin()
+                    elif choice == '5':
+                        print("\nExiting...")
+                        break
+                    else:
+                        print("Invalid choice. Please enter 1-5.")
+                except KeyboardInterrupt:
+                    print("\nOperation cancelled.")
+                    break
+                except Exception as e:
+                    print(f"Error: {str(e)}")
+        else:
+            print(f"Error: Unknown command '{command}'")
+            print_help()
+    except Exception as e:
+        print(f"Fatal error: {str(e)}", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
