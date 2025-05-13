@@ -1,29 +1,62 @@
 {
-    "name": "Student Management System DevContainer",
-    "dockerFile": "Dockerfile",
-    "context": "..",
-    "workspaceFolder": "/workspaces/student_management_system",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/student_management_system,type=bind,consistency=cached",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-python.python",
-                "ms-python.vscode-pylance",
-                "angular.ng-template"
-            ]
-        }
-    },
-    "remoteUser": "root",
-    "features": {
-        "ghcr.io/devcontainers/features/docker-outside-of-docker": {
-            "version": "latest"
-        },
-        "ghcr.io/meaningful-ooo/devcontainer-features/homebrew:2": {}
-    },
-    "appPort": [
-        "8000:8000",
-        "4200:4200",
-        "3000:3000"
-    ],
-    "postCreateCommand": "python3 -m venv .venv && .venv/bin/pip install -r .devcontainer/requirements.txt"
+  "name": "student-managment-system-devcontainer",
+  "image": "basedevelopmentimage:ubuntu-24.04",
+  "workspaceFolder": "/workspaces/student-managment-system",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/student-managment-system,type=bind,consistency=cached",
+  "remoteUser": "root",
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "runArgs": [
+    "--network=host"
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
+      "extensions": [
+        "redhat.vscode-xml",
+        "redhat.vscode-yaml",
+        "bradlc.vscode-tailwindcss",
+        "dustypomerleau.rust-syntax",
+        "ms-vscode.remote-explorer",
+        "ms-vscode-remote.remote-ssh-edit",
+        "ms-vscode-remote.remote-ssh",
+        "christian-kohler.path-intellisense",
+        "s3gf4ult.monokai-vibrant",
+        "ms-vscode-remote.remote-containers",
+        "cweijan.vscode-database-client2",
+        "cweijan.dbclient-jdbc",
+        "fill-labs.dependi",
+        "vadimcn.vscode-lldb",
+        "mikestead.dotenv",
+        "ms-azuretools.vscode-docker",
+        "ArthurLobo.easy-codesnap",
+        "janisdd.vscode-edit-csv",
+        "dsznajder.es7-react-js-snippets",
+        "tamasfe.even-better-toml",
+        "GrapeCity.gc-excelviewer",
+        "RichardLuo.frosted-glass-theme",
+        "ecmel.vscode-html-css",
+        "kisstkondoros.vscode-gutter-preview",
+        "xabikos.JavaScriptSnippets",
+        "ms-vscode.vscode-typescript-next",
+        "10F.laetus",
+        "yandeu.five-server",
+        "PKief.material-icon-theme",
+        "OliverCederborg.modern-monokai",
+        "larscom.monokai-dark-vibrant",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "akamud.vscode-theme-onedark",
+        "formulahendry.auto-close-tag",
+        "jeff-hykin.better-dockerfile-syntax",
+        "bmewburn.vscode-intelephense-client",
+        "ms-python.python",
+        "076923.python-image-preview",
+        "xirider.livecode"
+      ]
+    }
+  }
 }
