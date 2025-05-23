@@ -26,5 +26,5 @@ import { RouterLink } from '@angular/router';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AdminNavbarComponent {
-  
+
 }

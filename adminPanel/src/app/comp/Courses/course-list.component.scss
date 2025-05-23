@@ -1,314 +1,39 @@
+// Cosmic Dark Theme Variables
+$cosmic-dark-background: #10111F;
+$cosmic-dark-surface: #1A1B2E;
+$cosmic-dark-text: #E0E0E0;
+$cosmic-primary-accent: #7F5AF0;
+$cosmic-secondary-accent: #00A9FF;
+
 .container {
-  max-width: 1400px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  animation: fadeIn 0.5s ease-out;
+  max-width: 1200px;
+  margin: 100px auto;
 
-  .page-header {
-    margin-bottom: 2rem;
-
-    h1 {
-      color: var(--text-primary);
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      background: var(--accent-gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    p {
-      color: var(--text-secondary);
-      font-size: 1.1rem;
-      margin: 0;
-    }
-  }
-
-  .actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: var(--card-bg);
-    border: var(--card-border);
-    border-radius: 16px;
-    box-shadow: var(--shadow-md);
-    backdrop-filter: blur(20px);
-
-    .addButton {
-      background: var(--accent-gradient);
-      color: var(--text-primary);
-      border: none;
-      padding: 0.75rem 2rem;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: var(--transition-fast);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      &::before {
-        content: '+';
-        font-size: 1.2rem;
-        font-weight: 700;
-      }
-
-      &:hover {
-        background: var(--nebula-gradient);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-glow);
-      }
-    }
-
-    .searchBar {
-      .inputGroup {
-        position: relative;
-        min-width: 350px;
-
-        input {
-          width: 100%;
-          padding: 0.75rem 1rem 0.75rem 3rem;
-          background: var(--bg-surface);
-          border: 1px solid var(--border-color);
-          border-radius: 10px;
-          color: var(--text-primary);
-          font-size: 0.9rem;
-          transition: var(--transition-fast);
-
-          &:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
-          }
-
-          &::placeholder {
-            color: var(--text-muted);
-          }
-        }
-
-        &::before {
-          content: '🔍';
-          position: absolute;
-          left: 1rem;
-          top: 50%;
-          transform: translateY(-50%);
-          font-size: 1rem;
-          opacity: 0.6;
-        }
-      }
-    }
-  }
-
-  .courses-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  .course-card {
-    background: var(--card-bg);
-    border: var(--card-border);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: var(--shadow-lg);
-    backdrop-filter: blur(20px);
-    transition: var(--transition-normal);
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: var(--accent-gradient);
-      opacity: 0;
-      transition: opacity var(--transition-fast);
-    }
-
-    &:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--shadow-glow), var(--shadow-lg);
-
-      &::before {
-        opacity: 1;
-      }
-    }
-
-    .card-header {
-      padding: 2rem 2rem 1rem;
-      background: var(--bg-tertiary);
-
-      .course-title {
-        font-size: 1.4rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.75rem;
-        line-height: 1.3;
-      }
-
-      .course-meta {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-
-        .meta-badge {
-          padding: 0.4rem 1rem;
-          border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-
-          &.level {
-            background: rgba(159, 122, 234, 0.2);
-            color: var(--accent-primary);
-            border: 1px solid var(--accent-primary);
-          }
-
-          &.duration {
-            background: rgba(103, 126, 234, 0.2);
-            color: var(--accent-secondary);
-            border: 1px solid var(--accent-secondary);
-          }
-        }
-      }
-
-      .course-description {
-        color: var(--text-secondary);
-        line-height: 1.6;
-        font-size: 0.95rem;
-        margin: 0;
-      }
-    }
-
-    .card-body {
-      padding: 1rem 2rem 2rem;
-
-      .course-stats {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-
-        .stat-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 1rem;
-          background: var(--bg-surface);
-          border-radius: 10px;
-          border: 1px solid var(--border-color);
-
-          .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-            margin-bottom: 0.25rem;
-          }
-
-          .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-          }
-        }
-      }
-
-      .course-actions {
-        display: flex;
-        gap: 0.75rem;
-        justify-content: flex-end;
-
-        .action-btn {
-          padding: 0.75rem 1.5rem;
-          border-radius: 8px;
-          font-weight: 500;
-          font-size: 0.875rem;
-          cursor: pointer;
-          transition: var(--transition-fast);
-          border: none;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-
-          &.edit-btn {
-            background: var(--accent-gradient);
-            color: var(--text-primary);
-
-            &:hover {
-              background: var(--nebula-gradient);
-              transform: translateY(-1px);
-              box-shadow: var(--shadow-md);
-            }
-          }
-
-          &.delete-btn {
-            background: transparent;
-            color: var(--error);
-            border: 1px solid var(--error);
-
-            &:hover {
-              background: var(--error);
-              color: white;
-              transform: translateY(-1px);
-              box-shadow: 0 4px 12px rgba(252, 129, 129, 0.3);
-            }
-          }
-
-          &.view-btn {
-            background: transparent;
-            color: var(--info);
-            border: 1px solid var(--info);
-
-            &:hover {
-              background: var(--info);
-              color: white;
-              transform: translateY(-1px);
-              box-shadow: 0 4px 12px rgba(99, 179, 237, 0.3);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // Legacy table styles (if still needed)
   .table {
-    background: var(--card-bg);
-    border: var(--card-border);
-    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: var(--shadow-lg);
-    backdrop-filter: blur(20px);
 
     thead {
-      background: var(--bg-tertiary);
+      background-color: lighten($cosmic-dark-surface, 3%);
 
       tr {
         th {
-          padding: 1.5rem 1rem;
+          padding: 16px;
           font-weight: 600;
-          color: var(--text-primary);
+          color: lighten($cosmic-dark-text, 5%);
           text-transform: uppercase;
           font-size: 0.75rem;
-          letter-spacing: 0.1em;
-          border-bottom: 2px solid var(--border-color);
+          letter-spacing: 0.5px;
+          border-bottom: 2px solid lighten($cosmic-dark-surface, 10%);
           text-align: left;
 
           &:first-child {
-            padding-left: 2rem;
+            padding-left: 24px;
           }
 
           &:last-child {
-            padding-right: 2rem;
+            padding-right: 24px;
           }
         }
       }
@@ -317,10 +42,10 @@
     tbody {
       tr {
         transition: background-color 0.2s ease;
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid lighten($cosmic-dark-surface, 7%);
 
         &:hover {
-          background: rgba(159, 122, 234, 0.05);
+          background-color: lighten($cosmic-dark-surface, 2%);
         }
 
         &:last-child {
@@ -328,18 +53,17 @@
         }
 
         td {
-          padding: 1.5rem 1rem;
-          color: var(--text-secondary);
+          padding: 16px;
+          color: $cosmic-dark-text;
           vertical-align: middle;
 
           &:first-child {
-            padding-left: 2rem;
+            padding-left: 24px;
             font-weight: 500;
-            color: var(--text-primary);
           }
 
           &:last-child {
-            padding-right: 2rem;
+            padding-right: 24px;
           }
         }
       }
@@ -347,139 +71,69 @@
 
     .btns {
       display: flex;
-      gap: 0.75rem;
+      gap: 20px;
 
       button {
         cursor: pointer;
         border: none;
-        background: transparent;
+        background-color: transparent;
         font-size: 0.875rem;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        transition: var(--transition-fast);
-        font-weight: 500;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
 
-        &:first-child {
-          color: var(--info);
-          border: 1px solid var(--info);
+        &:first-child { // Edit/View button
+          color: $cosmic-secondary-accent; 
 
           &:hover {
-            background: var(--info);
-            color: white;
+            background-color: rgba($cosmic-secondary-accent, 0.15);
           }
         }
 
-        &:last-child {
-          color: var(--error);
-          border: 1px solid var(--error);
+        &:last-child { // Delete button
+          color: #ff7875; // A lighter red suitable for dark themes
 
           &:hover {
-            background: var(--error);
-            color: white;
+            background-color: rgba(220, 53, 69, 0.2); // Darker hover for red button
           }
         }
       }
     }
   }
 
-  // Empty state
-  .empty-state {
+  .actions {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem 2rem;
-    text-align: center;
-    background: var(--card-bg);
-    border: var(--card-border);
-    border-radius: 16px;
-    box-shadow: var(--shadow-md);
+    justify-content: space-between;
+    margin-bottom: 25px;
 
-    .empty-icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      opacity: 0.5;
-    }
-
-    h3 {
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-    }
-
-    p {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-    }
-
-    .create-first-btn {
-      background: var(--accent-gradient);
-      color: var(--text-primary);
+    .addButton {
+      background-color: $cosmic-primary-accent;
+      color: $cosmic-dark-text;
       border: none;
-      padding: 1rem 2rem;
-      border-radius: 10px;
-      font-weight: 600;
+      padding: 0 16px;
+      border-radius: 4px;
       cursor: pointer;
-      transition: var(--transition-fast);
+      height: 32px;
+      font-size: 0.875rem;
+      font-weight: 400;
+      transition: all 0.3s ease;
 
       &:hover {
-        background: var(--nebula-gradient);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-glow);
-      }
-    }
-  }
-}
-
-// Responsive design
-@media (max-width: 1200px) {
-  .courses-grid {
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .container {
-    margin: 1rem auto;
-    padding: 0 0.5rem;
-
-    .actions {
-      flex-direction: column;
-      gap: 1rem;
-      padding: 1rem;
-
-      .searchBar .inputGroup {
-        min-width: auto;
-        width: 100%;
-      }
-    }
-
-    .courses-grid {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-
-    .course-card {
-      .card-header {
-        padding: 1.5rem 1.5rem 1rem;
-
-        .course-title {
-          font-size: 1.2rem;
-        }
+      background-color: lighten($cosmic-primary-accent, 5%);
       }
 
-      .card-body {
-        padding: 1rem 1.5rem 1.5rem;
-
-        .course-actions {
-          flex-direction: column;
-
-          .action-btn {
-            justify-content: center;
-            width: 100%;
-          }
+      &:active {
+      background-color: darken($cosmic-primary-accent, 5%);
+      }
+    }
+    .searchBar{
+      .inputGroup{
+        min-width: 300px;
+        input{
+          padding:5px 1px;
         }
       }
     }
   }
+
 }

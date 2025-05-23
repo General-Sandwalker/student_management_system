@@ -1,71 +1,24 @@
-<nav class="admin-navbar">
-  <div class="navbar-container">
-    <!-- Left Section - Logo and Brand -->
-    <div class="navbar-left">
-      <div class="brand-logo">
-        <div class="logo-icon">
-          <span nz-icon nzType="crown" nzTheme="outline"></span>
-        </div>
-        <div class="brand-text">
-          <h1 class="brand-title">Kratos University</h1>
-          <span class="brand-subtitle">Admin Portal</span>
-        </div>
+<header class="admin-header">
+    <div class="header-left">
+      <div class="logo">
+      <span nz-icon nzType="user" nzTheme="outline" style="color: #00A9FF; font-size: 24px;"></span>
+      <h1>EduQuest (ADMIN)</h1>
       </div>
     </div>
-
-    <!-- Center Section - Navigation Menu -->
-    <div class="navbar-center">
-      <nav class="main-navigation">
-        <ul class="nav-menu">
-          <li class="nav-item">
-            <a routerLink="/inbox" class="nav-link" routerLinkActive="active">
-              <span nz-icon nzType="inbox" class="nav-icon"></span>
-              <span class="nav-text">Inbox</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a routerLink="/courses" class="nav-link" routerLinkActive="active">
-              <span nz-icon nzType="book" class="nav-icon"></span>
-              <span class="nav-text">Courses</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a routerLink="/department" class="nav-link" routerLinkActive="active">
-              <span nz-icon nzType="team" class="nav-icon"></span>
-              <span class="nav-text">Departments</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a routerLink="/stats" class="nav-link" routerLinkActive="active">
-              <span nz-icon nzType="bar-chart" class="nav-icon"></span>
-              <span class="nav-text">Analytics</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+    <div class="header-right">
+      <ul nz-menu nzMode="horizontal">
+      <li nz-menu-item>
+        <a routerLink="/inbox">Inbox</a>
+      </li>
+      <li nz-menu-item>
+        <a routerLink="/courses">Courses</a>
+      </li>
+      <li nz-menu-item>
+        <a routerLink="/department">Departements</a>
+      </li>
+      <li nz-menu-item>
+        <a routerLink="/stats">Statistics</a>
+      </li>
+      </ul>
     </div>
-
-    <!-- Right Section - User Actions -->
-    <div class="navbar-right">
-      <div class="user-actions">
-        <button class="action-button notification-btn" nz-button nzType="text">
-          <nz-badge nzCount="3" nzSize="small">
-            <span nz-icon nzType="bell" class="action-icon"></span>
-          </nz-badge>
-        </button>
-        
-        <button class="action-button settings-btn" nz-button nzType="text">
-          <span nz-icon nzType="setting" class="action-icon"></span>
-        </button>
-
-        <div class="user-profile">
-          <nz-avatar nzIcon="user" class="user-avatar"></nz-avatar>
-          <div class="user-info">
-            <span class="user-name">Administrator</span>
-            <span class="user-role">System Admin</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</nav>
+  </header>

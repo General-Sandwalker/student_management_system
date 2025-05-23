@@ -1,125 +1,42 @@
 .inbox-layout {
   width: 100%;
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  animation: fadeIn 0.5s ease-out;
+  max-width: 800px;
+  margin: 16px auto;
 }
 
 .inbox-container {
-  background: var(--card-bg);
-  border: var(--card-border);
-  border-radius: 16px;
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
-  backdrop-filter: blur(20px);
-  max-height: 80vh;
+  background-color: #10111F;
+  max-height: 700px;
+  overflow: auto;
 
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 2rem;
-    background: var(--bg-tertiary);
-    border-bottom: 1px solid var(--border-color);
+    padding: 16px 24px;
+    border-bottom: 1px solid lighten(#10111F, 10%);
 
-    h2 {
-      margin: 0;
-      color: var(--text-primary);
-      font-size: 1.5rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-
-      &::before {
-        content: '📧';
-        font-size: 1.25rem;
-      }
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 0.75rem;
-
-      button {
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-        border-radius: 8px;
-        background: var(--accent-gradient);
-        color: var(--text-primary);
-        border: none;
-        cursor: pointer;
-        transition: var(--transition-fast);
-
-        &:hover {
-          background: var(--nebula-gradient);
-          transform: translateY(-1px);
-          box-shadow: var(--shadow-md);
-        }
-      }
+    h4 { // Assuming there's a title in the header
+        color: #E0E0E0;
     }
   }
 
   .email-list {
-    overflow-y: auto;
-    max-height: calc(80vh - 100px);
-
     .email-item {
-      padding: 1.5rem 2rem;
-      border-bottom: 1px solid var(--border-color);
+      padding: 12px 24px;
+      border-bottom: 1px solid lighten(#10111F, 5%);
       cursor: pointer;
-      background: transparent;
-      transition: var(--transition-fast);
+      background-color: #1A1B2E;
+      transition: background-color 0.2s;
       position: relative;
 
-      &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 4px;
-        background: var(--accent-gradient);
-        opacity: 0;
-        transition: opacity var(--transition-fast);
-      }
-
       &:hover {
-        background: rgba(159, 122, 234, 0.08);
-
-        &::before {
-          opacity: 1;
-        }
+        background-color: lighten(#1A1B2E, 3%);
       }
 
       &.read {
         opacity: 0.7;
-
-        .sender-name {
-          font-weight: 400;
-        }
-      }
-
-      &.unread {
-        background: rgba(159, 122, 234, 0.05);
-
-        .sender-name {
-          font-weight: 600;
-        }
-
-        &::after {
-          content: '';
-          position: absolute;
-          right: 1.5rem;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 8px;
-          height: 8px;
-          background: var(--accent-primary);
-          border-radius: 50%;
-          box-shadow: 0 0 10px rgba(159, 122, 234, 0.6);
-        }
+        background-color: #1A1B2E; // Keep same as non-read or slightly darker
       }
 
       .email-content {
@@ -127,76 +44,31 @@
         min-width: 0;
 
         .email-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 0.5rem;
+          margin-bottom: 4px;
+        }
 
-          .sender-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
+        .sender-name {
+          font-weight: 500;
+          margin-right: 8px;
+          color: #E0E0E0;
+        }
 
-            .sender-name {
-              color: var(--text-primary);
-              font-size: 1rem;
-              margin: 0;
-              transition: var(--transition-fast);
-            }
-
-            .sender-email {
-              color: var(--text-tertiary);
-              font-size: 0.875rem;
-              opacity: 0.8;
-            }
-          }
-
-          .email-time {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            white-space: nowrap;
-            background: var(--bg-surface);
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-          }
+        .sender-email {
+          color: darken(#E0E0E0, 25%);
+          font-size: 0.9em;
         }
 
         .subject {
           font-weight: 500;
-          margin: 0.5rem 0;
-          color: var(--text-primary);
-          font-size: 1.1rem;
-          line-height: 1.4;
+          margin: 4px 0;
+          color: #E0E0E0;
         }
 
         .content-preview {
-          color: var(--text-secondary);
-          font-size: 0.9rem;
-          line-height: 1.5;
+          color: darken(#E0E0E0, 20%);
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          margin: 0;
-        }
-
-        .email-meta {
-          display: flex;
-          gap: 1rem;
-          margin-top: 0.75rem;
-
-          .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-muted);
-            font-size: 0.75rem;
-
-            .meta-icon {
-              font-size: 0.875rem;
-              color: var(--accent-primary);
-            }
-          }
         }
       }
     }
@@ -204,279 +76,53 @@
 }
 
 .email-detail {
-  background: var(--card-bg);
-  border: var(--card-border);
-  border-radius: 16px;
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
-  backdrop-filter: blur(20px);
-  animation: slideIn 0.3s ease-out;
+  background-color: #1A1B2E;
 
   .card-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 2rem;
-    background: var(--bg-tertiary);
-    border-bottom: 1px solid var(--border-color);
+    gap: 16px;
+    padding: 16px 24px;
+    border-bottom: 1px solid lighten(#10111F, 10%);
 
-    .back-button {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--accent-gradient);
-      color: var(--text-primary);
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: var(--transition-fast);
-
-      &:hover {
-        background: var(--nebula-gradient);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-      }
-    }
-
-    .email-actions {
-      display: flex;
-      gap: 0.75rem;
-
-      button {
-        padding: 0.75rem;
-        border-radius: 10px;
-        border: 1px solid var(--border-color);
-        background: transparent;
-        color: var(--text-secondary);
-        cursor: pointer;
-        transition: var(--transition-fast);
-
+    // Ensure button/icon colors in header are visible
+    button nz-button {
+        color: #E0E0E0;
         &:hover {
-          background: var(--accent-gradient);
-          color: var(--text-primary);
-          border-color: transparent;
-          transform: translateY(-1px);
+            color: #7F5AF0;
         }
-
-        &.delete-btn:hover {
-          background: var(--error);
-          color: white;
-        }
-      }
     }
   }
 
   .card-body {
-    padding: 2rem;
+    padding: 24px;
 
     .sender-info {
-      margin-bottom: 2rem;
-      padding: 1.5rem;
-      background: var(--bg-surface);
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
+      margin-bottom: 16px;
 
       .sender-name {
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 1.1rem;
-        margin-bottom: 0.25rem;
+        font-weight: 500;
+        margin-right: 8px;
+        color: #E0E0E0;
       }
 
       .sender-email {
-        color: var(--text-tertiary);
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
+        color: darken(#E0E0E0, 25%);
+        font-size: 0.9em;
       }
-
-      .email-metadata {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1rem;
-
-        .meta-item {
-          display: flex;
-          flex-direction: column;
-          gap: 0.25rem;
-
-          .meta-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 500;
-          }
-
-          .meta-value {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-          }
-        }
-      }
-    }
-
-    .email-subject {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border-color);
     }
 
     .email-content {
-      color: var(--text-secondary);
-      line-height: 1.7;
-      font-size: 1rem;
-
-      p {
-        margin-bottom: 1rem;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
-    }
-
-    .reply-section {
-      margin-top: 2rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border-color);
-
-      .reply-form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-
-        textarea {
-          min-height: 120px;
-          resize: vertical;
-          background: var(--bg-surface);
-          border: 1px solid var(--border-color);
-          border-radius: 8px;
-          padding: 1rem;
-          color: var(--text-primary);
-          font-family: inherit;
-
-          &:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
-          }
-        }
-
-        .reply-actions {
-          display: flex;
-          gap: 1rem;
-          justify-content: flex-end;
-
-          button {
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition-fast);
-
-            &.send-btn {
-              background: var(--accent-gradient);
-              color: var(--text-primary);
-              border: none;
-
-              &:hover {
-                background: var(--nebula-gradient);
-                transform: translateY(-1px);
-                box-shadow: var(--shadow-md);
-              }
-            }
-
-            &.cancel-btn {
-              background: transparent;
-              color: var(--text-secondary);
-              border: 1px solid var(--border-color);
-
-              &:hover {
-                background: var(--bg-surface);
-                color: var(--text-primary);
-              }
-            }
-          }
-        }
-      }
+      white-space: pre-wrap;
+      line-height: 1.6;
+      color: #E0E0E0;
     }
   }
 }
 
-// Empty state
-.empty-inbox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 2rem;
-  text-align: center;
-  color: var(--text-muted);
-
-  .empty-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    opacity: 0.5;
-  }
-
-  h3 {
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-  }
-
-  p {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-  }
-}
-
-// Responsive design
-@media (max-width: 768px) {
-  .inbox-layout {
-    margin: 1rem auto;
-    padding: 0 0.5rem;
-  }
-
-  .inbox-container {
-    border-radius: 12px;
-
-    .card-header {
-      padding: 1rem;
-
-      h2 {
-        font-size: 1.25rem;
-      }
-    }
-
-    .email-list .email-item {
-      padding: 1rem;
-
-      .email-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-      }
-    }
-  }
-
-  .email-detail {
-    .card-header {
-      padding: 1rem;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .card-body {
-      padding: 1rem;
-
-      .sender-info {
-        padding: 1rem;
-      }
-    }
-  }
+.btn-cancel {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
 }
