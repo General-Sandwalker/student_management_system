@@ -1,0 +1,45 @@
+.student-container {
+    max-width: 1200px;
+    margin : 100px auto;
+    padding: 24px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  
+    .header-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+  
+      .search-input {
+        width: 300px;
+      }
+    }
+  
+    nz-table {
+      width: 100%;
+  
+      th {
+        font-weight: 600;
+        background: #fafafa;
+      }
+  
+      td {
+        button {
+          margin-right: 8px;
+        }
+      }
+    }
+  
+    .modal-content {
+      nz-form-item {
+        margin-bottom: 16px;
+  
+        nz-form-label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 500;
+        }
+      }
+    }
+  }

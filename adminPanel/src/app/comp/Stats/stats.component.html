@@ -1,0 +1,55 @@
+<div class="stats-container">
+    <h2>Academic Statistics Dashboard</h2>
+
+    <!-- Loading state for all charts -->
+    <div *ngIf="!deptChartData || !courseChartData || !passFailChartData" class="loading-state">
+        <p>Loading statistics...</p>
+        <!-- You could add a spinner here -->
+    </div>
+
+    <div class="chart-row" *ngIf="deptChartData && courseChartData">
+        <div class="chart-container">
+            <h3>Students per Department</h3>
+            <div *ngIf="deptChartData; else loadingDept">
+                <canvas baseChart
+                    [data]="deptChartData"
+                    [options]="chartOptions"
+                    [type]="deptChartType">
+                </canvas>
+            </div>
+            <ng-template #loadingDept>
+                <div class="chart-loading">Loading department data...</div>
+            </ng-template>
+        </div>
+
+        <div class="chart-container">
+            <h3>Students per Course</h3>
+            <div *ngIf="courseChartData; else loadingCourse">
+                <canvas baseChart
+                    [data]="courseChartData"
+                    [options]="chartOptions"
+                    [type]="courseChartType">
+                </canvas>
+            </div>
+            <ng-template #loadingCourse>
+                <div class="chart-loading">Loading course data...</div>
+            </ng-template>
+        </div>
+    </div>
+
+    <div class="chart-row" *ngIf="passFailChartData">
+        <div class="chart-container">
+            <h3>Course Completion Ratio</h3>
+            <div *ngIf="passFailChartData; else loadingCompletion">
+                <canvas baseChart
+                    [data]="passFailChartData"
+                    [options]="chartOptions"
+                    [type]="passFailChartType">
+                </canvas>
+            </div>
+            <ng-template #loadingCompletion>
+                <div class="chart-loading">Loading completion data...</div>
+            </ng-template>
+        </div>
+    </div>
+</div>

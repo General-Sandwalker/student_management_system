@@ -1,0 +1,55 @@
+<div class="inbox-layout">
+  <nz-card class="inbox-container" *ngIf="!selectedEmail">
+    <div class="card-header">
+      <h3>Inbox</h3>
+      <button nz-button nzType="text" nzShape="circle" (click)="refreshEmails()">
+        <span nz-icon nzType="reload"></span>
+      </button>
+    </div>
+
+    <nz-list class="email-list" [nzDataSource]="emails" nzBordered nzSize="large">
+      <nz-list-item 
+        *ngFor="let email of emails" 
+        [class.read]="email.read"
+        (click)="selectEmail(email)"
+        class="email-item">
+        
+        <div class="email-content">
+          <div class="email-header">
+            <span class="sender-name">{{email.email}}</span>
+            <span class="sender-email">{{email.created_at}}</span>
+          </div>
+          
+          <div class="subject">{{email.subject}}</div>
+          <div class="content-preview">{{email.content}}</div>
+        </div>
+        
+        <button 
+          nz-button 
+          nzType="text" 
+          nzShape="circle" 
+          class="btn-cancel" 
+          (click)="$event.stopPropagation(); handleRemoveReport(email.id)">
+          <span nz-icon nzType="close"></span>
+        </button>
+      </nz-list-item>
+    </nz-list>
+  </nz-card>
+
+  <nz-card class="email-detail" *ngIf="selectedEmail">
+    <div class="card-header">
+      <button nz-button nzType="text" (click)="selectedEmail = null">
+        <span nz-icon nzType="arrow-left"></span>
+      </button>
+      <h3>{{selectedEmail.subject}}</h3>
+    </div>
+    
+    <div class="card-body">
+      <div class="sender-info">
+        <span class="sender-name">{{selectedEmail.name}}</span>
+        <span class="sender-email">{{selectedEmail.email}}</span>
+      </div>
+      <div class="email-content">{{selectedEmail.content}}</div>
+    </div>
+  </nz-card>
+</div>

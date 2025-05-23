@@ -1,0 +1,37 @@
+<div class="container">
+
+  <div class="actions">
+  <div class="searchBar">
+  <nz-input-group [nzSuffix]="suffixIconSearch" class="inputGroup">
+    <input [(ngModel)]="searchTerm" (ngModelChange)="filterCourses()" id="searchCourse" type="text" nz-input placeholder="Search for course" />
+  </nz-input-group>
+  <ng-template #suffixIconSearch>
+    <nz-icon nzType="search" />
+  </ng-template>
+</div>
+  <button class="addButton" (click)="navigateTo('create')">Add Course</button>
+</div>
+  <nz-table #basicTable [nzData]="filteredCourses" class="table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Level</th>
+        <th>Duration</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (data of basicTable.data; track data) {
+        <tr>
+          <td>{{ data.title }}</td>
+          <td>{{ data.level }}</td>
+          <td>{{ data.duration }}</td>
+          <td class="btns">
+            <button (click)="navigateTo(data.id)">View Deltails</button>
+            <button (click)="deleteCourse(data.id)">Delete</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</div>

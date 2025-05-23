@@ -1,0 +1,206 @@
+.contactContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+  
+  .contactHeader {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .contactHeader h1 {
+    font-size: 2.5rem;
+    color: #2563eb;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #2563eb, #4f46e5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .contactHeader p {
+    font-size: 1.1rem;
+    color: #4b5563;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .contactContent {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .contactForm {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .formGroup {
+    margin-bottom: 1.5rem;
+  }
+  
+  .formGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  
+  .formGroup input,
+  .formGroup textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+  }
+  
+  .formGroup input:focus,
+  .formGroup textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb), 0.1);
+  }
+  
+  .formGroup textarea {
+    resize: vertical;
+    min-height: 150px;
+  }
+  
+  .submitButton {
+    background: linear-gradient(to right, #2563eb, #4f46e5);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  
+  .submitButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+  }
+  
+  .submitButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .submitMessage {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+    background-color: #f0fdf4;
+    color: #166534;
+  }
+  
+  .contactInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .infoCard,
+  .hoursCard,
+  .socialCard {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .infoCard h3,
+  .hoursCard h3,
+  .socialCard h3 {
+    font-size: 1.25rem;
+    color: #111827;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .infoCard ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .infoCard li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .infoCard li:last-child {
+    margin-bottom: 0;
+  }
+  
+  .icon {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+  }
+  
+  .hoursCard ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .hoursCard li {
+    margin-bottom: 0.75rem;
+  }
+  
+  .hoursCard li:last-child {
+    margin-bottom: 0;
+  }
+  
+  .socialLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .socialLink {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #f3f4f6;
+    color: #2563eb;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .socialLink:hover {
+    background-color: #2563eb;
+    color: white;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .contactContent {
+      grid-template-columns: 1fr;
+    }
+    
+    .contactHeader h1 {
+      font-size: 2rem;
+    }
+  }

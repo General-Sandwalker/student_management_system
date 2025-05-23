@@ -1,0 +1,118 @@
+<div class="department-container">
+  <div class="header">
+    <input 
+      class="search-box"
+      nz-input 
+      placeholder="Search departments..." 
+      [(ngModel)]="searchTerm" 
+      (input)="filterDepartments()" 
+    />
+
+    <button class="addButton" (click)="addDepartement()">Add department</button>
+  </div>
+
+  <nz-table 
+    #departmentTable 
+    [nzData]="filteredDepartments" 
+    [nzLoading]="isLoading"
+    [nzFrontPagination]="false"
+    [nzShowSizeChanger]="true"
+    [nzPageSizeOptions]="[5, 10, 20]"
+  >
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Students</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let department of departmentTable.data">
+        <ng-container *ngIf="department.id !== depId; else editRow">
+          <td>{{ department.name }}</td>
+          <td>{{ department.description }}</td>
+          <td>
+            <button 
+              nz-button 
+              nzType="link" 
+              (click)="navigateTo(department.id)"
+            >
+              View
+            </button>
+          </td>
+          <td>
+            <div class="actions">
+              <button 
+                nz-button 
+                nzType="primary" 
+                nzSize="small" 
+                (click)="tooggleEdit(department.id)"
+              >
+                <span nz-icon nzType="edit"></span>
+              </button>
+              <button 
+                nz-button 
+                nzType="default" 
+                nzSize="small" 
+                nzDanger 
+                (click)="deleteDepartment(department.id)"
+              >
+                <span nz-icon nzType="delete"></span>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-template #editRow>
+          <td>
+            <input 
+              nz-input 
+              [(ngModel)]="dep.name" 
+              name="name"
+              placeholder="Enter name"
+            />
+          </td>
+          <td>
+            <input 
+              nz-input 
+              [(ngModel)]="dep.description" 
+              name="description"
+              placeholder="Enter description"
+            />
+          </td>
+          <td>
+            <button 
+              nz-button 
+              nzType="link"
+              (click)="navigateTo(department.id)"
+            >
+              View
+            </button>
+          </td>
+          <td>
+            <div class="actions">
+              <button 
+                nz-button 
+                nzType="primary" 
+                nzSize="small" 
+                (click)="saveChanges()"
+              >
+                <span nz-icon nzType="save"></span>
+              </button>
+              <button 
+                nz-button 
+                nzType="default" 
+                nzSize="small" 
+                nzDanger 
+                (click)="toogleCancel()"
+              >
+                <span nz-icon nzType="close"></span>
+              </button>
+            </div>
+          </td>
+        </ng-template>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>

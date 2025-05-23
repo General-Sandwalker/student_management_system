@@ -1,0 +1,74 @@
+<div class="course-details">
+  <div class="course-header">
+    <h1 class="editable" contenteditable="true" (input)="updateCourse('title', $event)">
+      {{ course.title || 'Course Title' }}
+    </h1>
+    <p class="editable" contenteditable="true" (input)="updateCourse('description', $event)">
+      {{ course.description || 'Course description goes here' }}
+    </p>
+  </div>
+
+  <div class="course-meta">
+    <select [(ngModel)]="course.level" (change)="updateCourse('level', $event)">
+      <option [value]="'beginner'" [selected]="course.level === 'beginner'">Beginner</option>
+      <option [value]="'intermediate'" [selected]="course.level === 'intermediate'">Intermediate</option>
+      <option [value]="'advanced'" [selected]="course.level === 'advanced'">Advanced</option>
+    </select>
+
+    <p class="editable" contenteditable="true" (input)="updateCourse('duration', $event)">
+      {{ course.duration || 'Course duration (e.g., 6 weeks)' }}
+    </p>
+  </div>
+
+  <div class="course-modules">
+    <h2>Modules</h2>
+    <ul>
+      <li *ngFor="let module of course.modules; let i = index" class="module-item">
+        <div class="module-header">
+          <span class="editable" contenteditable="true" (input)="updateModule(i, 'title', $event)">
+            {{ module.title || 'Module Title' }}
+          </span>
+          <button class="delete-btn" (click)="deleteModule(i)">×</button>
+        </div>
+
+        <ul>
+          <li *ngFor="let lesson of module.lessons; let j = index" class="lesson-item">
+            <div class="lesson-header">
+              <span class="editable" contenteditable="true" (input)="updateLesson(i, j, 'title', $event)">
+                {{ lesson.title || 'Lesson Title' }}
+              </span>
+              <button class="delete-btn" (click)="deleteLesson(i, j)">×</button>
+            </div>
+
+            <div class="markdown-editor-container" *ngIf="editingLesson === i + '-' + j">
+              <div class="editor-tabs">
+                <button [class.active]="activeTab === 'write'" (click)="activeTab = 'write'">Write</button>
+                <button [class.active]="activeTab === 'preview'" (click)="activeTab = 'preview'">Preview</button>
+              </div>
+
+              <div class="editor-content">
+                <textarea *ngIf="activeTab === 'write'" 
+                  [(ngModel)]="lesson.content"
+                  (ngModelChange)="updateLessonContent(i, j, $event)"
+                  placeholder="Write your lesson content in Markdown..."></textarea>
+
+                <div *ngIf="activeTab === 'preview'" 
+                     class="markdown-preview" 
+                     [innerHTML]="renderMarkdown(lesson.content || '*No content yet*')">
+                </div>
+              </div>
+            </div>
+
+            <button class="toggle-editor-btn" (click)="toggleEditor(i, j)">
+              {{ editingLesson === i + '-' + j ? 'Hide Editor' : 'Edit Content' }}
+            </button>
+          </li>
+        </ul>
+
+        <button class="add-btn" (click)="addLesson(i)">Add Lesson</button>
+      </li>
+    </ul>
+
+    <button class="add-btn" (click)="addModule()">Add Module</button>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<div class="student-container">
+    <div class="header-actions">
+      <nz-input-group class="search-input">
+        <input
+          nz-input
+          placeholder="Search students..."
+          [(ngModel)]="searchText"
+        />
+      </nz-input-group>
+    </div>
+  
+    <nz-table #studentTable [nzData]="filteredStudents" nzBordered>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of studentTable.data">
+          <td>{{ student.name }}</td>
+          <td>{{ student.email }}</td>
+          <td>
+            <nz-tag [nzColor]="student.isBlocked ? 'error' : 'success'">
+              {{ student.isBlocked ? 'Blocked' : 'Active' }}
+            </nz-tag>
+          </td>
+          <td>
+            <button nz-button nzType="default" (click)="toggleBlock(student)">
+              <span nz-icon [nzType]="student.isBlocked ? 'unlock' : 'lock'"></span>
+              {{ student.isBlocked ? 'Unblock' : 'Block' }}
+            </button>
+            <button nz-button nzType="default" nzDanger (click)="deleteStudent(student.id)">
+              <span nz-icon nzType="delete"></span>
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>

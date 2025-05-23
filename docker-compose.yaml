@@ -1,0 +1,125 @@
+version: '3.8'
+
+services:
+  favorite-service:
+    build: 
+      context: ./favoriteService
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/favorites-db
+      - SPRING_DATA_REDIS_HOST=redis
+    networks:
+      - kratos-network
+    restart: unless-stopped
+
+  api-service:
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=kratosuniversity
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - SECRET_KEY=Ju15FVCXV9aB3dE7gH2kLmNpQrStUvWx
+      - GROQ_API_KEY=get-key-from-groq
+    networks:
+      - kratos-network
+    restart: unless-stopped
+
+  kratos-university:
+    build:
+      context: ./Kratos-University
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - kratos-network
+    restart: unless-stopped
+
+  admin-panel:
+    build:
+      context: ./adminPanel
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    networks:
+      - kratos-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=kratosuniversity
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kratos-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d kratosuniversity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=favorites-db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - kratos-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - kratos-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  kratos-network:
+    driver: bridge
